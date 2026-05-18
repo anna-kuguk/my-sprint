@@ -1,0 +1,269 @@
+{
+  "manifesto": "",
+  "weeks": {
+    "1": {
+      "daily": {
+        "mon": {
+          "sleep": "7",
+          "activity": "60",
+          "meditation": "",
+          "therapy": "",
+          "learning": "60",
+          "shower": true,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "бытовые вопросы",
+              "done": true
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        },
+        "tue": {
+          "sleep": "",
+          "activity": "",
+          "meditation": "",
+          "therapy": "",
+          "learning": "",
+          "shower": false,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        },
+        "wed": {
+          "sleep": "",
+          "activity": "",
+          "meditation": "",
+          "therapy": "",
+          "learning": "",
+          "shower": false,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        },
+        "thu": {
+          "sleep": "",
+          "activity": "",
+          "meditation": "",
+          "therapy": "",
+          "learning": "",
+          "shower": false,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        },
+        "fri": {
+          "sleep": "",
+          "activity": "",
+          "meditation": "",
+          "therapy": "",
+          "learning": "",
+          "shower": false,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        },
+        "sat": {
+          "sleep": "",
+          "activity": "",
+          "meditation": "",
+          "therapy": "",
+          "learning": "",
+          "shower": false,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        },
+        "sun": {
+          "sleep": "",
+          "activity": "",
+          "meditation": "",
+          "therapy": "",
+          "learning": "",
+          "shower": false,
+          "rehab": false,
+          "energy": "",
+          "context": "",
+          "tasks": [
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            },
+            {
+              "text": "",
+              "done": false
+            }
+          ]
+        }
+      },
+      "northStar": "",
+      "sleep": "7.0 ч",
+      "training": "",
+      "activity": "1 ч",
+      "nutrition": "",
+      "recovery": "",
+      "coldShower": "1 раз(а)",
+      "energy": "",
+      "task1": "",
+      "task1kpi": "",
+      "task1fact": "",
+      "task2": "",
+      "task2kpi": "",
+      "task2fact": "",
+      "task3": "",
+      "task3kpi": "",
+      "task3fact": "",
+      "therapy": "",
+      "learning": "60 мин",
+      "hobby": "",
+      "dontFail": "",
+      "remove": "",
+      "notDone": "",
+      "worked": "",
+      "notWorked": "",
+      "nextWeek": "",
+      "weekScore": "",
+      "weekStatus": ""
+    }
+  },
+  "publishedAt": "2026-05-18T14:31:50.914Z"
+}
