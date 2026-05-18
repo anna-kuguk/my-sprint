@@ -171,7 +171,6 @@
       flex-shrink: 0;
     }
 
-    /* Структура To-Do строк для микро-задач */
     .todo-list-container {
       display: flex;
       flex-direction: column;
@@ -244,6 +243,11 @@
       border-color: #58a6ff;
     }
 
+    input:disabled, textarea:disabled, select:disabled {
+      opacity: 0.85;
+      cursor: default;
+    }
+
     textarea {
       min-height: 80px;
       resize: vertical;
@@ -277,6 +281,80 @@
 
     .save-button:hover {
       background: #2ea043;
+    }
+
+    .publish-button {
+      background: #6e3699;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .publish-button:hover {
+      background: #8957e5;
+    }
+
+    .publish-button:disabled {
+      background: #2d333b;
+      cursor: not-allowed;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mode-banner {
+      background: #161b22;
+      border: 1px solid #2d333b;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #8b949e;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mode-banner.view {
+      border-color: #1f6feb;
+    }
+
+    .mode-banner.edit {
+      border-color: #6e3699;
+    }
+
+    .mode-banner-pill {
+      background: #1f6feb;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .mode-banner.edit .mode-banner-pill {
+      background: #6e3699;
+    }
+
+    .mode-banner a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .mode-banner a:hover {
+      text-decoration: underline;
     }
 
     .days-container {
@@ -324,7 +402,6 @@
       white-space: nowrap;
     }
 
-    /* SVG-кольцо прогресса дня */
     .day-ring {
       width: 38px;
       height: 38px;
@@ -422,7 +499,7 @@
         grid-column: span 2;
       }
 
-      .save-button {
+      .save-button, .publish-button {
         width: auto;
       }
     }
@@ -446,9 +523,19 @@
         <div class="subtitle">18 мая - 14 августа 2026 - планирование, логи за каждый день и анализ</div>
       </div>
 
-      <button class="save-button" onclick="saveCurrent()">
-        Сохранить всё
-      </button>
+      <div class="header-buttons">
+        <button class="save-button" id="saveBtn" onclick="saveCurrent()">
+          Сохранить всё
+        </button>
+        <button class="publish-button" id="publishBtn" onclick="publishSnapshot()" style="display: none;">
+          📤 Опубликовать снэпшот
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-banner" id="modeBanner" style="display: none;">
+      <span class="mode-banner-pill" id="modePill">Просмотр</span>
+      <span id="modeText"></span>
     </div>
 
     <div class="dashboard">
@@ -475,7 +562,6 @@
 
     <div class="weeks-grid" id="weeksGrid"></div>
 
-    <!-- ============ НЕДЕЛЬНЫЕ СЕКЦИИ ============ -->
     <div id="weekView">
       <div class="section">
         <h2 class="section-title">Главная цель недели</h2>
@@ -611,29 +697,33 @@
       </div>
     </div>
 
-    <!-- ============ МАНИФЕСТ ============ -->
     <div id="manifestoView" style="display: none;">
       <div class="section">
         <h2 class="section-title">📜 Манифест на спринт</h2>
         <div class="field">
-          <textarea id="manifestoText" class="manifesto-textarea" placeholder="Сюда вставь свой годовой манифест..."></textarea>
+          <textarea id="manifestoText" class="manifesto-textarea" placeholder="Сюда вставь свой манифест на спринт..."></textarea>
         </div>
       </div>
     </div>
 
     <div class="footer">
-      Данные сохраняются локально в вашем браузере. Адаптировано под мобильные устройства.
+      Данные в режиме редактирования сохраняются локально в твоём браузере. Публичный снэпшот - в data.json репозитория.
     </div>
   </div>
 
   <script>
-    // ============ КОНСТАНТЫ ============
     const TOTAL_WEEKS = 13;
     const TASKS_PER_DAY = 5;
-    const RING_CIRCUMFERENCE = 2 * Math.PI * 14; // ~87.96
+    const RING_CIRCUMFERENCE = 2 * Math.PI * 14;
 
     let currentWeek = 1;
     let isManifestoMode = false;
+    let snapshotData = null;
+    const isEditMode = new URLSearchParams(location.search).get('edit') === '1';
+    const GITHUB_REPO_OWNER = 'anna-kuguk';
+    const GITHUB_REPO_NAME = 'my-sprint';
+    const GITHUB_DATA_PATH = 'data.json';
+    const PAT_STORAGE_KEY = 'github-pat';
 
     const daysArr = [
       { id: 'mon', name: 'Понедельник' },
@@ -645,7 +735,6 @@
       { id: 'sun', name: 'Воскресенье' }
     ];
 
-    // Поля недельного уровня (сохраняются/загружаются по неделе)
     const weeklyFields = [
       'northStar',
       'sleep', 'training', 'activity', 'nutrition', 'recovery', 'coldShower', 'energy',
@@ -658,7 +747,6 @@
       'weekScore', 'weekStatus'
     ];
 
-    // ============ ДНЕВНАЯ КАРТОЧКА ============
     function initDaysUI() {
       const container = document.getElementById('daysContainer');
       container.innerHTML = '';
@@ -759,7 +847,6 @@
       meta.innerText = isOpen ? 'свернуть' : 'развернуть';
     }
 
-    // ============ КОЛЬЦО ПРОГРЕССА ДНЯ ============
     function updateDayRing(dayId) {
       let done = 0;
       let filled = 0;
@@ -769,8 +856,6 @@
         const hasText = !!(taskText && taskText.value.trim());
         if (hasText) {
           filled++;
-          // Засчитываем выполненной только задачу с текстом - чтобы случайный чекбокс
-          // на пустой строке не давал процент выше 100.
           if (checkbox && checkbox.checked) done++;
         }
       }
@@ -782,7 +867,6 @@
       if (ring) {
         const dash = (fraction * RING_CIRCUMFERENCE).toFixed(2);
         ring.setAttribute('stroke-dasharray', `${dash} ${RING_CIRCUMFERENCE.toFixed(2)}`);
-        // Цвет: красный <40%, жёлтый 40-79%, зелёный 80%+
         let color = '#da3633';
         if (percent >= 80) color = '#238636';
         else if (percent >= 40) color = '#d29922';
@@ -795,7 +879,6 @@
       daysArr.forEach(d => updateDayRing(d.id));
     }
 
-    // ============ КНОПКИ НЕДЕЛЬ + МАНИФЕСТ ============
     function initWeeks() {
       const grid = document.getElementById('weeksGrid');
       grid.innerHTML = '';
@@ -821,8 +904,6 @@
       if (btn) btn.classList.add('active');
     }
 
-    // ============ ИТОГИ ЗДОРОВЬЯ / ЛИЧНОГО ============
-    // Минуты в "X ч Y мин" / "X мин" / "" (пусто при 0)
     function formatMinutes(totalMin) {
       const n = Math.round(Number(totalMin) || 0);
       if (n <= 0) return '';
@@ -868,7 +949,6 @@
       document.getElementById('energy').value = energyCount ? `${(totalEnergy / energyCount).toFixed(1)} / 10` : '';
     }
 
-    // ============ СОХРАНЕНИЕ / ЗАГРУЗКА ============
     function collectWeekData() {
       const data = { daily: {} };
 
@@ -903,6 +983,7 @@
     }
 
     function saveCurrent() {
+      if (!isEditMode) return;
       if (isManifestoMode) {
         localStorage.setItem('sprint-manifesto', document.getElementById('manifestoText').value);
         alert('Манифест сохранён.');
@@ -961,6 +1042,23 @@
       });
     }
 
+    function getWeekData(week) {
+      if (isEditMode) {
+        const raw = localStorage.getItem('sprint-week-' + week);
+        if (!raw) return null;
+        try { return JSON.parse(raw); } catch (e) { return null; }
+      }
+      if (snapshotData && snapshotData.weeks) {
+        return snapshotData.weeks[String(week)] || null;
+      }
+      return null;
+    }
+
+    function getManifestoText() {
+      if (isEditMode) return localStorage.getItem('sprint-manifesto') || '';
+      return (snapshotData && snapshotData.manifesto) || '';
+    }
+
     function loadWeek(week) {
       isManifestoMode = false;
       document.getElementById('weekView').style.display = '';
@@ -970,17 +1068,10 @@
       setActiveButton(`week-btn-${week}`);
       document.getElementById('currentWeekDisplay').innerText = `${week} / ${TOTAL_WEEKS}`;
 
-      const raw = localStorage.getItem(`sprint-week-${week}`);
-      if (raw) {
-        try {
-          applyWeekData(JSON.parse(raw));
-        } catch (e) {
-          console.error('Не удалось распарсить данные недели', week, e);
-          clearWeekUI();
-        }
-      } else {
-        clearWeekUI();
-      }
+      const data = getWeekData(week);
+      if (data) applyWeekData(data);
+      else clearWeekUI();
+
       calculateTotals();
       updateAllDayRings();
     }
@@ -990,33 +1081,26 @@
       document.getElementById('weekView').style.display = 'none';
       document.getElementById('manifestoView').style.display = '';
       setActiveButton('week-btn-manifesto');
-      const saved = localStorage.getItem('sprint-manifesto');
-      document.getElementById('manifestoText').value = saved || '';
+      document.getElementById('manifestoText').value = getManifestoText();
     }
 
-    // ============ ДАШБОРД ============
     function updateDashboard() {
       let completed = 0;
       let totalScore = 0;
       let scoredWeeks = 0;
 
       for (let i = 1; i <= TOTAL_WEEKS; i++) {
-        const raw = localStorage.getItem(`sprint-week-${i}`);
+        const data = getWeekData(i);
         const btn = document.getElementById(`week-btn-${i}`);
-        if (raw) {
+        if (data) {
           completed++;
-          try {
-            const data = JSON.parse(raw);
-            if (data.weekScore) {
-              const score = Number(data.weekScore);
-              if (!isNaN(score)) { totalScore += score; scoredWeeks++; }
-            }
-            if (btn) {
-              const status = data.weekStatus || '';
-              btn.innerHTML = status ? `Нед ${i}<br>${status}` : `Нед ${i}`;
-            }
-          } catch (e) {
-            console.error('Не удалось распарсить данные недели', i, e);
+          if (data.weekScore) {
+            const score = Number(data.weekScore);
+            if (!isNaN(score)) { totalScore += score; scoredWeeks++; }
+          }
+          if (btn) {
+            const status = data.weekStatus || '';
+            btn.innerHTML = status ? `Нед ${i}<br>${status}` : `Нед ${i}`;
           }
         } else if (btn) {
           btn.innerHTML = `Нед ${i}`;
@@ -1028,20 +1112,166 @@
       document.getElementById('avgScore').innerText = scoredWeeks ? (totalScore / scoredWeeks).toFixed(1) : '0';
     }
 
-    // ============ INIT ============
-    initDaysUI();
-    initWeeks();
-
-    // Привязать обновление кольца к вводу текста задач (после initDaysUI)
-    daysArr.forEach(day => {
-      for (let i = 1; i <= TASKS_PER_DAY; i++) {
-        const ta = document.getElementById(`day-${day.id}-task${i}`);
-        if (ta) ta.addEventListener('input', () => updateDayRing(day.id));
+    async function fetchSnapshot() {
+      try {
+        const res = await fetch('data.json?ts=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) { snapshotData = null; return; }
+        snapshotData = await res.json();
+      } catch (e) {
+        console.error('Не удалось загрузить data.json:', e);
+        snapshotData = null;
       }
-    });
+    }
 
-    loadWeek(1);
-    updateDashboard();
+    function disableAllInputs() {
+      document.querySelectorAll('#weekView input, #weekView textarea, #weekView select, #manifestoView textarea').forEach(el => {
+        el.disabled = true;
+      });
+    }
+
+    function applyModeUI() {
+      const banner = document.getElementById('modeBanner');
+      const pill = document.getElementById('modePill');
+      const text = document.getElementById('modeText');
+      const saveBtn = document.getElementById('saveBtn');
+      const publishBtn = document.getElementById('publishBtn');
+
+      banner.style.display = '';
+      if (isEditMode) {
+        banner.classList.remove('view');
+        banner.classList.add('edit');
+        pill.textContent = 'Редактирование';
+        text.textContent = 'Данные сохраняются в твоём браузере. Нажми "Опубликовать снэпшот", чтобы обновить общедоступную версию.';
+        saveBtn.style.display = '';
+        publishBtn.style.display = '';
+      } else {
+        banner.classList.remove('edit');
+        banner.classList.add('view');
+        pill.textContent = 'Просмотр';
+        if (snapshotData) {
+          const ts = snapshotData.publishedAt ? new Date(snapshotData.publishedAt).toLocaleString('ru-RU') : '';
+          text.textContent = 'Снэпшот спринта' + (ts ? ' от ' + ts : '') + '. Только для чтения.';
+        } else {
+          text.innerHTML = 'Снэпшота пока нет. <a href="?edit=1">Открыть редактор</a> и опубликовать первый.';
+        }
+        saveBtn.style.display = 'none';
+        publishBtn.style.display = 'none';
+        disableAllInputs();
+      }
+    }
+
+    function collectAllData() {
+      const data = { manifesto: '', weeks: {}, publishedAt: new Date().toISOString() };
+      data.manifesto = localStorage.getItem('sprint-manifesto') || '';
+      for (let i = 1; i <= TOTAL_WEEKS; i++) {
+        const raw = localStorage.getItem('sprint-week-' + i);
+        if (raw) {
+          try { data.weeks[String(i)] = JSON.parse(raw); } catch (e) { console.error('parse week', i, e); }
+        }
+      }
+      return data;
+    }
+
+    function ensurePat() {
+      let pat = localStorage.getItem(PAT_STORAGE_KEY);
+      if (!pat) {
+        pat = window.prompt('Введи GitHub Personal Access Token (fine-grained, доступ Contents: Read and write на репо my-sprint).\nХранится локально в твоём браузере. Никуда не отправляется кроме github.com.');
+        if (pat) {
+          pat = pat.trim();
+          if (pat) localStorage.setItem(PAT_STORAGE_KEY, pat);
+        }
+      }
+      return pat;
+    }
+
+    function encodeBase64UTF8(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    async function publishSnapshot() {
+      const pat = ensurePat();
+      if (!pat) { alert('Без токена опубликовать не получится.'); return; }
+
+      const btn = document.getElementById('publishBtn');
+      const orig = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Публикую...';
+
+      try {
+        const data = collectAllData();
+        const content = encodeBase64UTF8(JSON.stringify(data, null, 2));
+        const apiUrl = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/contents/' + GITHUB_DATA_PATH;
+
+        let sha = null;
+        const getRes = await fetch(apiUrl, {
+          headers: { 'Authorization': 'token ' + pat, 'Accept': 'application/vnd.github+json' }
+        });
+        if (getRes.ok) {
+          const meta = await getRes.json();
+          sha = meta.sha;
+        } else if (getRes.status === 401) {
+          localStorage.removeItem(PAT_STORAGE_KEY);
+          throw new Error('Токен невалидный или без прав. Удалила его - нажми ещё раз, попросит новый.');
+        } else if (getRes.status !== 404) {
+          throw new Error('GET ' + getRes.status + ': ' + (await getRes.text()));
+        }
+
+        const body = {
+          message: 'snapshot: ' + new Date().toISOString(),
+          content: content,
+          branch: 'main'
+        };
+        if (sha) body.sha = sha;
+
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'token ' + pat,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!putRes.ok) {
+          const errText = await putRes.text();
+          if (putRes.status === 401) {
+            localStorage.removeItem(PAT_STORAGE_KEY);
+            throw new Error('Токен невалидный. Удалила его - нажми ещё раз, попросит новый.');
+          }
+          throw new Error('PUT ' + putRes.status + ': ' + errText);
+        }
+
+        alert('Снэпшот опубликован. Через 1-2 минуты обновится для всех, кто откроет сайт.');
+      } catch (e) {
+        console.error(e);
+        alert('Ошибка публикации: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+      }
+    }
+
+    async function init() {
+      initDaysUI();
+      initWeeks();
+
+      daysArr.forEach(day => {
+        for (let i = 1; i <= TASKS_PER_DAY; i++) {
+          const ta = document.getElementById(`day-${day.id}-task${i}`);
+          if (ta) ta.addEventListener('input', () => updateDayRing(day.id));
+        }
+      });
+
+      if (!isEditMode) {
+        await fetchSnapshot();
+      }
+      applyModeUI();
+      loadWeek(1);
+      updateDashboard();
+    }
+
+    init();
   </script>
 </body>
 </html>
