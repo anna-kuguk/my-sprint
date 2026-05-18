@@ -1211,7 +1211,10 @@
           sha = meta.sha;
         } else if (getRes.status === 401) {
           localStorage.removeItem(PAT_STORAGE_KEY);
-          throw new Error('Токен невалидный или без прав. Удалила его - нажми ещё раз, попросит новый.');
+          throw new Error('Токен невалидный. Удалила его - нажми ещё раз, попросит новый.');
+        } else if (getRes.status === 403) {
+          localStorage.removeItem(PAT_STORAGE_KEY);
+          throw new Error('Токену не хватает прав на чтение. Проверь Contents = Read AND write. Удалила токен - нажми ещё раз.');
         } else if (getRes.status !== 404) {
           throw new Error('GET ' + getRes.status + ': ' + (await getRes.text()));
         }
@@ -1238,6 +1241,10 @@
           if (putRes.status === 401) {
             localStorage.removeItem(PAT_STORAGE_KEY);
             throw new Error('Токен невалидный. Удалила его - нажми ещё раз, попросит новый.');
+          }
+          if (putRes.status === 403) {
+            localStorage.removeItem(PAT_STORAGE_KEY);
+            throw new Error('Токену не хватает прав. Проверь в настройках GitHub: Contents = Read AND write (не просто Read). Удалила токен - нажми ещё раз, попросит новый.');
           }
           throw new Error('PUT ' + putRes.status + ': ' + errText);
         }
