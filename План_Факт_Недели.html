@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10-недельный спринт</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    }
+
+    body {
+      background: #0f1115;
+      color: #f1f3f5;
+      padding: 16px;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .subtitle {
+      color: #8b949e;
+      font-size: 14px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #2d333b;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .card-title {
+      color: #8b949e;
+      font-size: 11px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card-value {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .week-button {
+      background: #161b22;
+      border: 1px solid #2d333b;
+      color: white;
+      border-radius: 10px;
+      padding: 10px 4px;
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .week-button:hover {
+      border-color: #58a6ff;
+    }
+
+    .week-button.active {
+      background: #1f6feb;
+      border-color: #1f6feb;
+    }
+
+    .section {
+      background: #161b22;
+      border: 1px solid #2d333b;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      margin-bottom: 16px;
+      font-size: 18px;
+      color: #58a6ff;
+      border-left: 4px solid #1f6feb;
+      padding-left: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .field-row label {
+      margin-bottom: 0;
+      flex-grow: 1;
+    }
+
+    .field-row input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #1f6feb;
+    }
+
+    label {
+      color: #c9d1d9;
+      font-size: 13px;
+    }
+
+    input, textarea, select {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: white;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #58a6ff;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .task-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .task-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .save-button {
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .save-button:hover {
+      background: #2ea043;
+    }
+
+    .days-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .day-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .day-header {
+      background: #1f242c;
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 15px;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .day-header:hover {
+      background: #262c36;
+    }
+
+    .day-header .day-meta {
+      font-size: 12px;
+      color: #8b949e;
+      font-weight: normal;
+    }
+
+    .day-content {
+      padding: 16px;
+      display: none; /* Скрыто по умолчанию */
+      background: #11141a;
+      border-top: 1px solid #30363d;
+    }
+
+    /* Эффект открытия дня */
+    .day-card.open .day-content {
+      display: block;
+    }
+
+    .day-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .day-sub-title {
+      font-size: 13px;
+      color: #58a6ff;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .footer {
+      margin-top: 30px;
+      color: #8b949e;
+      font-size: 12px;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    /* Адаптация под Планшеты и Десктопы */
+    @media (min-width: 768px) {
+      body {
+        padding: 24px;
+      }
+
+      .dashboard {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .weeks-grid {
+        grid-template-columns: repeat(10, 1fr);
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .day-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .day-grid-full {
+        grid-column: span 2;
+      }
+
+      .save-button {
+        width: auto;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">
+        <h1>10-недельный спринт</h1>
+        <div class="subtitle">Планирование, логи за каждый день и анализ</div>
+      </div>
+
+      <button class="save-button" onclick="saveWeek()">
+        Сохранить всё
+      </button>
+    </div>
+
+    <div class="dashboard">
+      <div class="card">
+        <div class="card-title">Текущая неделя</div>
+        <div class="card-value" id="currentWeekDisplay">1 / 10</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Средняя оценка</div>
+        <div class="card-value" id="avgScore">0</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Заполнено недель</div>
+        <div class="card-value" id="completedWeeks">0</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Прогресс спринта</div>
+        <div class="card-value" id="sprintProgress">0%</div>
+      </div>
+    </div>
+
+    <div class="weeks-grid" id="weeksGrid"></div>
+
+    <div class="section">
+      <h2 class="section-title">Главная цель недели</h2>
+      <div class="field">
+        <textarea id="northStar" placeholder="Главная цель недели..."></textarea>
+      </div>
+    </div>
+
+    <!-- БЛОК ЕЖЕДНЕВНОГО ЛОГИРОВАНИЯ -->
+    <div class="section">
+      <h2 class="section-title">Дневник спринта (План / Факт за день)</h2>
+      <div class="days-container" id="daysContainer">
+        <!-- Генерируется через JavaScript -->
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Здоровье (Итоги недели)</h2>
+      <div class="grid">
+        <div class="field">
+          <label>Сон (ч)</label>
+          <input id="sleep" placeholder="Итог или План / факт" />
+        </div>
+
+        <div class="field">
+          <label>Тренировки</label>
+          <input id="training" placeholder="План / факт" />
+        </div>
+
+        <div class="field">
+          <label>Велик / активность</label>
+          <input id="activity" placeholder="Суммируется автоматически" readonly style="background: #161b22; color: #8b949e;" />
+        </div>
+
+        <div class="field">
+          <label>Медитации (мин)</label>
+          <input id="nutrition" placeholder="Суммируется автоматически" readonly style="background: #161b22; color: #8b949e;" />
+        </div>
+
+        <div class="field">
+          <label>Реабилитация</label>
+          <input id="recovery" placeholder="План / факт" />
+        </div>
+
+        <div class="field">
+          <label>Контрастный душ</label>
+          <input id="coldShower" placeholder="Суммируется автоматически" readonly style="background: #161b22; color: #8b949e;" />
+        </div>
+
+        <div class="field">
+          <label>Энергия</label>
+          <input id="energy" placeholder="Оценка /10" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Главные задачи</h2>
+
+      <div class="task-block">
+        <div class="grid">
+          <div class="field"><label>Задача 1</label><input id="task1" placeholder="Описание задачи" /></div>
+          <div class="field"><label>KPI</label><input id="task1kpi" placeholder="KPI" /></div>
+          <div class="field"><label>Факт</label><input id="task1fact" placeholder="Результат" /></div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="grid">
+          <div class="field"><label>Задача 2</label><input id="task2" placeholder="Описание задачи" /></div>
+          <div class="field"><label>KPI</label><input id="task2kpi" placeholder="KPI" /></div>
+          <div class="field"><label>Факт</label><input id="task2fact" placeholder="Результат" /></div>
+        </div>
+      </div>
+
+      <div class="task-block">
+        <div class="grid">
+          <div class="field"><label>Задача 3</label><input id="task3" placeholder="Описание задачи" /></div>
+          <div class="field"><label>KPI</label><input id="task3kpi" placeholder="KPI" /></div>
+          <div class="field"><label>Факт</label><input id="task3fact" placeholder="Результат" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Личное (Итоги недели)</h2>
+      <div class="grid">
+        <div class="field">
+          <label>Терапия / practices (мин)</label>
+          <input id="family" placeholder="Суммируется автоматически" readonly style="background: #161b22; color: #8b949e;" />
+        </div>
+
+        <div class="field">
+          <label>Обучение / книги (мин)</label>
+          <input id="learning" placeholder="Суммируется автоматически" readonly style="background: #161b22; color: #8b949e;" />
+        </div>
+
+        <div class="field">
+          <label>Хобби / отдых</label>
+          <input id="hobby" placeholder="План / факт" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Фокус недели</h2>
+      <div class="grid">
+        <div class="field"><label>Что нельзя провалить</label><textarea id="dontFail"></textarea></div>
+        <div class="field"><label>Что убрать</label><textarea id="remove"></textarea></div>
+        <div class="field"><label>Главный риск</label><textarea id="risk"></textarea></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Итог недели</h2>
+      <div class="field"><label>Что выполнено</label><textarea id="done"></textarea></div>
+      <div class="field"><label>Что не выполнено</label><textarea id="notDone"></textarea></div>
+      <div class="field"><label>Главная победа</label><textarea id="win"></textarea></div>
+      <div class="field"><label>Главный провал</label><textarea id="fail"></textarea></div>
+      <div class="field"><label>Что сработало</label><textarea id="worked"></textarea></div>
+      <div class="field"><label>Что не сработало</label><textarea id="notWorked"></textarea></div>
+      <div class="field"><label>Вывод на следующую неделю</label><textarea id="nextWeek"></textarea></div>
+
+      <div class="grid" style="margin-top: 14px;">
+        <div class="field">
+          <label>Оценка недели /10</label>
+          <input id="weekScore" type="number" min="0" max="10" />
+        </div>
+
+        <div class="field">
+          <label>Статус недели</label>
+          <select id="weekStatus">
+            <option value="🟢">🟢 Отлично</option>
+            <option value="🟡">🟡 Средне</option>
+            <option value="🔴">🔴 Провал</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Данные сохраняются локально в вашем браузере. Адаптировано под мобильные устройства.
+    </div>
+  </div>
+
+  <script>
+    let currentWeek = 1;
+    const daysArr = [
+      { id: 'mon', name: 'Понедельник' },
+      { id: 'tue', name: 'Вторник' },
+      { id: 'wed', name: 'Среда' },
+      { id: 'thu', name: 'Четверг' },
+      { id: 'fri', name: 'Пятница' },
+      { id: 'sat', name: 'Суббота' },
+      { id: 'sun', name: 'Воскресенье' }
+    ];
+
+    const weeklyFields = [
+      'northStar', 'sleep', 'training', 'activity', 'nutrition', 'recovery', 'coldShower', 'energy',
+      'task1', 'task1kpi', 'task1fact',
+      'task2', 'task2kpi', 'task2fact',
+      'task3', 'task3kpi', 'task3fact',
+      'family', 'learning', 'hobby',
+      'dontFail', 'remove', 'risk',
+      'done', 'notDone', 'win', 'fail', 'worked', 'notWorked', 'nextWeek',
+      'weekScore', 'weekStatus'
+    ];
+
+    function initDaysUI() {
+      const container = document.getElementById('daysContainer');
+      container.innerHTML = '';
+
+      daysArr.forEach(day => {
+        const dayCard = document.createElement('div');
+        dayCard.className = 'day-card';
+        dayCard.id = `card-${day.id}`;
+
+        dayCard.innerHTML = `
+          <div class="day-header" onclick="toggleDay('${day.id}')">
+            <span>${day.name}</span>
+            <span class="day-meta" id="meta-${day.id}">Нажмите, чтобы развернуть</span>
+          </div>
+          <div class="day-content">
+            <div class="day-grid">
+              
+              <div class="day-grid-full"><div class="day-sub-title">1. Экспресс-трекер</div></div>
+              
+              <div class="field">
+                <label>Велик / активность (км/мин)</label>
+                <input type="number" id="day-${day.id}-activity" oninput="calculateTotals()" placeholder="0" min="0" />
+              </div>
+              <div class="field">
+                <label>Медитации (мин)</label>
+                <input type="number" id="day-${day.id}-meditation" oninput="calculateTotals()" placeholder="0" min="0" />
+              </div>
+              <div class="field">
+                <label>Терапия / практики (мин)</label>
+                <input type="number" id="day-${day.id}-therapy" oninput="calculateTotals()" placeholder="0" min="0" />
+              </div>
+              <div class="field">
+                <label>Обучение / книги (мин)</label>
+                <input type="number" id="day-${day.id}-learning" oninput="calculateTotals()" placeholder="0" min="0" />
+              </div>
+              <div class="field-row">
+                <label>Контрастный душ</label>
+                <input type="checkbox" id="day-${day.id}-shower" onchange="calculateTotals()" />
+              </div>
+              <div class="field">
+                <label>Энергия дня (1-10)</label>
+                <input type="number" id="day-${day.id}-energy" placeholder="1-10" min="1" max="10" />
+              </div>
+
+              <div class="day-grid-full"><div class="day-sub-title">2. Главный фокус микро-задачи</div></div>
+              <div class="field day-grid-full">
+                <label>План на день</label>
+                <input id="day-${day.id}-plan" placeholder="Что нужно сделать?" />
+              </div>
+              <div class="field day-grid-full">
+                <label>Факт / Результат</label>
+                <input id="day-${day.id}-fact" placeholder="Что сделано?" />
+              </div>
+
+              <div class="day-grid-full"><div class="day-sub-title">3. Микро-анализ</div></div>
+              <div class="field day-grid-full">
+                <label>Что происходило (события, контекст)</label>
+                <textarea id="day-${day.id}-context" placeholder="Пара слов о дне..."></textarea>
+              </div>
+
+            </div>
+          </div>
+        `;
+        container.appendChild(dayCard);
+      });
+    }
+
+    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ
+    function toggleDay(dayId) {
+      const card = document.getElementById(`card-${dayId}`);
+      const meta = document.getElementById(`meta-${dayId}`);
+      
+      // Переключаем класс open
+      const isOpen = card.classList.toggle('open');
+      
+      // Обновляем текст подсказки
+      meta.innerText = isOpen ? 'Нажмите, чтобы свернуть' : 'Нажмите, чтобы развернуть';
+    }
+
+    function initWeeks() {
+      const grid = document.getElementById('weeksGrid');
+      grid.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'week-button';
+        btn.innerHTML = `Нед ${i}`;
+        btn.onclick = () => loadWeek(i);
+        if (i === 1) btn.classList.add('active');
+        btn.id = `week-btn-${i}`;
+        grid.appendChild(btn);
+      }
+    }
+
+    function calculateTotals() {
+      let totalActivity = 0;
+      let totalMeditation = 0;
+      let totalTherapy = 0;
+      let totalLearning = 0;
+      let totalShowers = 0;
+
+      daysArr.forEach(day => {
+        const actVal = Number(document.getElementById(`day-${day.id}-activity`).value) || 0;
+        const medVal = Number(document.getElementById(`day-${day.id}-meditation`).value) || 0;
+        const theVal = Number(document.getElementById(`day-${day.id}-therapy`).value) || 0;
+        const lrnVal = Number(document.getElementById(`day-${day.id}-learning`).value) || 0;
+        const shwChecked = document.getElementById(`day-${day.id}-shower`).checked;
+
+        totalActivity += actVal;
+        totalMeditation += medVal;
+        totalTherapy += theVal;
+        totalLearning += lrnVal;
+        if (shwChecked) totalShowers++;
+      });
+
+      document.getElementById('activity').value = totalActivity ? `${totalActivity}` : '';
+      document.getElementById('nutrition').value = totalMeditation ? `${totalMeditation} мин` : '';
+      document.getElementById('family').value = totalTherapy ? `${totalTherapy} мин` : '';
+      document.getElementById('learning').value = totalLearning ? `${totalLearning} мин` : '';
+      document.getElementById('coldShower').value = totalShowers ? `${totalShowers} раз(а)` : '';
+    }
+
+    function saveWeek() {
+      const data = { daily: {} };
+
+      weeklyFields.forEach(field => {
+        data[field] = document.getElementById(field).value;
+      });
+
+      daysArr.forEach(day => {
+        data.daily[day.id] = {
+          activity: document.getElementById(`day-${day.id}-activity`).value,
+          meditation: document.getElementById(`day-${day.id}-meditation`).value,
+          therapy: document.getElementById(`day-${day.id}-therapy`).value,
+          learning: document.getElementById(`day-${day.id}-learning`).value,
+          shower: document.getElementById(`day-${day.id}-shower`).checked,
+          energy: document.getElementById(`day-${day.id}-energy`).value,
+          plan: document.getElementById(`day-${day.id}-plan`).value,
+          fact: document.getElementById(`day-${day.id}-fact`).value,
+          context: document.getElementById(`day-${day.id}-context`).value,
+        };
+      });
+
+      localStorage.setItem(`sprint-week-${currentWeek}`, JSON.stringify(data));
+      updateDashboard();
+      alert(`Все данные за Неделю ${currentWeek} сохранены!`);
+    }
+
+    function loadWeek(week) {
+      currentWeek = week;
+      document.querySelectorAll('.week-button').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`week-btn-${week}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.getElementById('currentWeekDisplay').innerText = `${week} / 10`;
+
+      const raw = localStorage.getItem(`sprint-week-${week}`);
+      if (raw) {
+        const data = JSON.parse(raw);
+
+        weeklyFields.forEach(field => {
+          if (document.getElementById(field)) {
+            document.getElementById(field).value = data[field] || '';
+          }
+        });
+
+        daysArr.forEach(day => {
+          const dData = data.daily && data.daily[day.id] ? data.daily[day.id] : {};
+          document.getElementById(`day-${day.id}-activity`).value = dData.activity || '';
+          document.getElementById(`day-${day.id}-meditation`).value = dData.meditation || '';
+          document.getElementById(`day-${day.id}-therapy`).value = dData.therapy || '';
+          document.getElementById(`day-${day.id}-learning`).value = dData.learning || '';
+          document.getElementById(`day-${day.id}-shower`).checked = dData.shower || false;
+          document.getElementById(`day-${day.id}-energy`).value = dData.energy || '';
+          document.getElementById(`day-${day.id}-plan`).value = dData.plan || '';
+          document.getElementById(`day-${day.id}-fact`).value = dData.fact || '';
+          document.getElementById(`day-${day.id}-context`).value = dData.context || '';
+        });
+      } else {
+        weeklyFields.forEach(field => {
+          if (document.getElementById(field)) document.getElementById(field).value = '';
+        });
+        daysArr.forEach(day => {
+          document.getElementById(`day-${day.id}-activity`).value = '';
+          document.getElementById(`day-${day.id}-meditation`).value = '';
+          document.getElementById(`day-${day.id}-therapy`).value = '';
+          document.getElementById(`day-${day.id}-learning`).value = '';
+          document.getElementById(`day-${day.id}-shower`).checked = false;
+          document.getElementById(`day-${day.id}-energy`).value = '';
+          document.getElementById(`day-${day.id}-plan`).value = '';
+          document.getElementById(`day-${day.id}-fact`).value = '';
+          document.getElementById(`day-${day.id}-context`).value = '';
+        });
+      }
+      calculateTotals();
+    }
+
+    function updateDashboard() {
+      let completed = 0;
+      let totalScore = 0;
+      let scoredWeeks = 0;
+
+      for (let i = 1; i <= 10; i++) {
+        const raw = localStorage.getItem(`sprint-week-${i}`);
+        if (raw) {
+          completed++;
+          const data = JSON.parse(raw);
+          if (data.weekScore) {
+            totalScore += Number(data.weekScore);
+            scoredWeeks++;
+          }
+          const btn = document.getElementById(`week-btn-${i}`);
+          if (btn && data.weekStatus) {
+            btn.innerHTML = `Нед ${i}<br>${data.weekStatus}`;
+          }
+        }
+      }
+
+      document.getElementById('completedWeeks').innerText = completed;
+      document.getElementById('sprintProgress').innerText = `${Math.round((completed / 10) * 100)}%`;
+      document.getElementById('avgScore').innerText = scoredWeeks ? (totalScore / scoredWeeks).toFixed(1) : '0';
+    }
+
+    initDaysUI();
+    initWeeks();
+    loadWeek(1);
+    updateDashboard();
+  </script>
+</body>
+</html>
