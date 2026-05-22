@@ -37,27 +37,27 @@
           ]
         },
         "tue": {
-          "sleep": "",
-          "activity": "",
+          "sleep": "8",
+          "activity": "60",
           "meditation": "",
           "therapy": "",
-          "learning": "",
-          "shower": false,
-          "rehab": false,
-          "energy": "",
+          "learning": "88",
+          "shower": true,
+          "rehab": true,
+          "energy": "7",
           "context": "",
           "tasks": [
             {
-              "text": "",
-              "done": false
+              "text": "Планирование на неделю",
+              "done": true
             },
             {
-              "text": "",
-              "done": false
+              "text": "Создание карточки на Яндекс и Гугл (отправить на модерацию)",
+              "done": true
             },
             {
-              "text": "",
-              "done": false
+              "text": "Допилить РнП",
+              "done": true
             },
             {
               "text": "",
@@ -70,31 +70,31 @@
           ]
         },
         "wed": {
-          "sleep": "",
-          "activity": "",
+          "sleep": "7",
+          "activity": "60",
           "meditation": "",
           "therapy": "",
-          "learning": "",
-          "shower": false,
-          "rehab": false,
-          "energy": "",
+          "learning": "60",
+          "shower": true,
+          "rehab": true,
+          "energy": "8",
           "context": "",
           "tasks": [
             {
-              "text": "",
-              "done": false
+              "text": "Дать ОС по манифесту Жене",
+              "done": true
             },
             {
-              "text": "",
-              "done": false
+              "text": "Написать свой манифест, выложить",
+              "done": true
             },
             {
-              "text": "",
-              "done": false
+              "text": "Аудит сайта",
+              "done": true
             },
             {
-              "text": "",
-              "done": false
+              "text": "Время с дочкой",
+              "done": true
             },
             {
               "text": "",
@@ -103,23 +103,23 @@
           ]
         },
         "thu": {
-          "sleep": "",
-          "activity": "",
+          "sleep": "7",
+          "activity": "90",
           "meditation": "",
           "therapy": "",
-          "learning": "",
-          "shower": false,
-          "rehab": false,
-          "energy": "",
-          "context": "",
+          "learning": "90",
+          "shower": true,
+          "rehab": true,
+          "energy": "9",
+          "context": "надо переходить на тариф макс Антропик. Не хватает лимитов",
           "tasks": [
             {
-              "text": "",
-              "done": false
+              "text": "Составить план на основе аудита сайта по фазам",
+              "done": true
             },
             {
-              "text": "",
-              "done": false
+              "text": "Выполнить фаза 0 ",
+              "done": true
             },
             {
               "text": "",
@@ -136,22 +136,22 @@
           ]
         },
         "fri": {
-          "sleep": "",
+          "sleep": "7.5",
           "activity": "",
           "meditation": "",
           "therapy": "",
           "learning": "",
           "shower": false,
-          "rehab": false,
+          "rehab": true,
           "energy": "",
           "context": "",
           "tasks": [
             {
-              "text": "",
-              "done": false
+              "text": "Фаза 1 закончить по сайту",
+              "done": true
             },
             {
-              "text": "",
+              "text": "Встреча 10-ки",
               "done": false
             },
             {
@@ -235,13 +235,13 @@
           ]
         }
       },
-      "northStar": "",
-      "sleep": "7.0 ч",
+      "northStar": "Планирование, манифест, работа над сайтом (сео+гео)",
+      "sleep": "7.3 ч",
       "training": "",
-      "activity": "1 ч",
+      "activity": "4 ч 30 мин",
       "nutrition": "",
-      "recovery": "1 раз(а)",
-      "coldShower": "1 раз(а)",
+      "recovery": "5 раз(а)",
+      "coldShower": "4 раз(а)",
       "energy": "8.0 / 10",
       "task1": "",
       "task1kpi": "",
@@ -253,7 +253,7 @@
       "task3kpi": "",
       "task3fact": "",
       "therapy": "",
-      "learning": "60 мин",
+      "learning": "298 мин",
       "hobby": "",
       "dontFail": "",
       "remove": "",
@@ -265,5 +265,5 @@
       "weekStatus": ""
     }
   },
-  "publishedAt": "2026-05-22T07:45:18.204Z"
+  "publishedAt": "2026-05-22T07:50:37.458Z"
 }
